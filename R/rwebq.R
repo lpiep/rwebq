@@ -29,7 +29,7 @@ webq_request <- function(endpoint){
 
   auth_signature <- openssl::sha1(
     paste(
-      auth$key, 'GET', gsub('/$', '', gsub(APIHOST, '', url)),  date, '',
+      auth$key, 'GET', gsub(APIHOST, '', url),  date, '',
       sep = '\n'
     ),
 
@@ -48,7 +48,7 @@ webq_request <- function(endpoint){
     stop(sprintf("Connection unsuccessful. API message:\n    %s", resp_error), call. = FALSE)
   }
 
-  content(resp, encoding = 'UTF-8')
+  httr::content(resp, encoding = 'UTF-8')
 }
 
 
@@ -72,4 +72,26 @@ webq_config <- function(netid, key) {
   stopifnot(is.character(key))
   Sys.setenv(CATALYST_NETID = netid)
   Sys.setenv(CATALYST_KEY = key)
+}
+
+
+#' webq_surveys
+#'
+#' @return a tibble
+#' @export
+#'
+#' @examples webq_surveys()
+#' @description Returns a tibble of WebQ surveys that the user is authorized to view.
+#' The tibble has the following rows:
+#'
+#'  * name: the survey name
+#'  * survey_id: the id that can be used as an argument to retrieve results with `webq_survey_results`
+#'  * response_count: the current number of responses
+webq_surveys <- function(){
+  html <- webq_request('')
+  name <- rvest::html_text(rvest::html_elements(html, 'a.survey'))
+  survey_id <- gsub(APIURL, '', rvest::html_attr(rvest::html_elements(html, 'a.survey'), 'href'))
+  response_count <- as.numeric(rvest::html_text(rvest::html_elements(html, 'span.response_count')))
+  if(length(unique(c(length(name), length(survey_id), length(response_count)))) != 1){stop("Response was not formatted as expected.")}
+  tibble::tibble(name = name, survey_id = survey_id, response_count = response_count)
 }

@@ -15,12 +15,13 @@ webq_auth <- function() {
 
 #' webq_request
 #'
-#' @param endpoint
+#' @param endpoint passed to GET as `url`
+#' @param ... additional parameters passed to GET
 #'
 #' @return HTML Response as a character string
 #'
 #'
-webq_request <- function(endpoint){
+webq_request <- function(endpoint, ...){
   stopifnot(is.character(endpoint))
 
   auth <- webq_auth()
@@ -40,7 +41,8 @@ webq_request <- function(endpoint){
     httr::add_headers(
       Date = date,
       Authorization = paste0('SolAuth ', auth$netid, ':', auth_signature)
-    )
+    ),
+    ...
   )
 
   if(httr::http_error(resp)){
@@ -85,7 +87,7 @@ webq_config <- function(netid, key) {
 #' The tibble has the following rows:
 #'
 #'  * name: the survey name
-#'  * survey_id: the id that can be used as an argument to retrieve results with `webq_survey_results`
+#'  * survey_id: the id that can be used as an argument to retrieve results with `webq_responses`
 #'  * response_count: the current number of responses
 webq_surveys <- function(){
   html <- webq_request('')
@@ -95,3 +97,70 @@ webq_surveys <- function(){
   if(length(unique(c(length(name), length(survey_id), length(response_count)))) != 1){stop("Response was not formatted as expected.")}
   tibble::tibble(name = name, survey_id = survey_id, response_count = response_count)
 }
+
+webq_participants <- function(survey_id){
+  if(length(survey_id) != 1){stop('survey_id must be of length 1')}
+  if(!is.character(survey_id)){stop('survey_id must be of type character')}
+  if(!grepl('[0-9]+', survey_id)){stop('invalid survey_id format')}
+
+  html <- webq_request(paste0(survey_id, '/responses'))
+
+  participants <- rvest::html_nodes(html, 'li.participant')
+
+  participant_id <- sapply(participants, function(ppt){rvest::html_text(rvest::html_elements(ppt, 'span.participant_id'))})
+  rest_id <- sapply(participants, function(ppt){rvest::html_text(rvest::html_elements(ppt, 'span.rest_id'))})
+  start_date <- sapply(participants, function(ppt){rvest::html_text(rvest::html_elements(ppt, 'span.start_date'))})
+  end_date <- sapply(participants, function(ppt){rvest::html_text(rvest::html_elements(ppt, 'span.end_date'))})
+
+  tibble::tibble(survey_id = survey_id, participant_id = participant_id, rest_id = rest_id, start_date = start_date, end_date = end_date)
+}
+
+
+webq_participants <- function(survey_id){
+  if(length(survey_id) != 1){stop('survey_id must be of length 1')}
+  if(!is.character(survey_id)){stop('survey_id must be of type character')}
+  if(!grepl('[0-9]+', survey_id)){stop('invalid survey_id format')}
+
+  html <- webq_request(paste0(survey_id, '/responses'))
+
+  participants <- rvest::html_elements(html, 'li.participant')
+
+  participant_id <- sapply(participants, function(ppt){rvest::html_text(rvest::html_elements(ppt, 'span.participant_id'))})
+  rest_id <- sapply(participants, function(ppt){rvest::html_text(rvest::html_elements(ppt, 'span.rest_id'))})
+  start_date <- sapply(participants, function(ppt){rvest::html_text(rvest::html_elements(ppt, 'span.start_date'))})
+  end_date <- sapply(participants, function(ppt){rvest::html_text(rvest::html_elements(ppt, 'span.end_date'))})
+
+  tibble::tibble(survey_id = survey_id, participant_id = participant_id, rest_id = rest_id, start_date = start_date, end_date = end_date)
+}
+
+
+webq_responses <- function(survey_id, participant_ids = NULL){
+  if(length(survey_id) != 1){stop('survey_id must be of length 1')}
+  if(!is.character(survey_id)){stop('survey_id must be of type character')}
+  if(!grepl('[0-9]+', survey_id)){stop('invalid survey_id format')}
+  if(!(is.null(participant_ids) | is.character(participant_ids))){stop('participant_ids must be of type character')}
+
+  if(is.null(participant_ids)){
+    html <- webq_request(paste0(survey_id, '/responses'))
+  }else{
+    html <- webq_request(paste0(survey_id, '/responses?', paste0('participant_id=', participant_ids, collapse = '&')))
+  }
+
+  participants <- rvest::html_elements(html, 'li.participant')
+
+  lapply(participants,
+        function(ppt){
+          participant_id <- rvest::html_text2(rvest::html_element(ppt, 'span.participant_id'))
+          responses <- lapply(rvest::html_elements(ppt, 'li.response'),
+            function(response){
+              question_id <- rvest::html_text2(rvest::html_element(response, 'span.question_id'))
+              text_values <- rvest::html_text2(rvest::html_element(response, 'ul.text_values'))
+              numeric_values <- rvest::html_text2(rvest::html_element(response, 'ul.numeric_values'))
+              list(question_id = question_id, text_values = text_values, numeric_values = numeric_values)
+            }
+          )
+          list(participant_id = participant_id, responses = responses)
+        }
+      )
+}
+

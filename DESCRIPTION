@@ -11,6 +11,7 @@ LazyData: true
 Imports: 
     openssl,
     httr (>= 1.4.2),
-    rvest (>= 1.0.0)
+    rvest (>= 1.0.0),
+    XML
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)

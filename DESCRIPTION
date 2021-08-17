@@ -1,11 +1,14 @@
 Package: rwebq
 Type: Package
-Title: What the Package Does (Title Case)
+Title: R Interface to UW Catalyst WebQ API
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Logan Piepmeier
+Maintainer: Logan Piepmeier <loganap@uw.edu>
+Description: Interfaces with University of Washington's WebQ survey administration tool, pulling WebQ data into ready-to-use tibbles.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Imports: 
+    openssl,
+    httr (>= 1.4.2),
+    rvest (>= 1.0.0)

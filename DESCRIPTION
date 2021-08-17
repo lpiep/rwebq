@@ -12,6 +12,7 @@ Imports:
     openssl,
     httr (>= 1.4.2),
     rvest (>= 1.0.0),
-    XML
+    XML,
+    dplyr
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)

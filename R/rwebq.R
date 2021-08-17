@@ -148,7 +148,7 @@ webq_responses <- function(survey_id, participant_ids = NULL){
 
   participants <- rvest::html_elements(html, 'li.participant')
 
-  lapply(participants,
+  all_responses <- lapply(participants,
         function(ppt){
           participant_id <- rvest::html_text2(rvest::html_element(ppt, 'span.participant_id'))
           responses <- lapply(rvest::html_elements(ppt, 'li.response'),
@@ -156,11 +156,27 @@ webq_responses <- function(survey_id, participant_ids = NULL){
               question_id <- rvest::html_text2(rvest::html_element(response, 'span.question_id'))
               text_values <- rvest::html_text2(rvest::html_element(response, 'ul.text_values'))
               numeric_values <- rvest::html_text2(rvest::html_element(response, 'ul.numeric_values'))
-              list(question_id = question_id, text_values = text_values, numeric_values = numeric_values)
+              tibble::tibble(question_id = question_id, text_values = text_values, numeric_values = numeric_values)
             }
           )
-          list(participant_id = participant_id, responses = responses)
+          responses <- do.call(rbind, responses)
+          responses$participant_id <- participant_id
+          responses
         }
       )
+  all_responses <- do.call(rbind, all_responses)
+
+  questions <- rvest::html_elements(html, 'li.question')
+  all_questions <- lapply(questions,
+         function(question){
+           question_id <- rvest::html_text2(rvest::html_element(question, 'span.question_id'))
+           question_type <- rvest::html_text2(rvest::html_element(question, 'span.type'))
+           question_content <- rvest::html_text2(rvest::html_element(question, 'span.content'))
+           tibble::tibble(question_id = question_id, question_type = question_type, question_content = question_content)
+         }
+      )
+  all_questions <- do.call(rbind, all_questions)
+
+  dplyr::full_join(all_questions, all_responses, by = 'question_id')
 }
 

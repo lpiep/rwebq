@@ -14,10 +14,10 @@ Returns a tibble of WebQ surveys that the user is authorized to view.
 The tibble has the following rows:
 \itemize{
 \item name: the survey name
-\item survey_id: the id that can be used as an argument to retrieve results with \code{webq_survey_results}
+\item survey_id: the id that can be used as an argument to retrieve results with \code{webq_responses}
 \item response_count: the current number of responses
 }
 }
 \examples{
-webq_surveys()
+\dontrun{webq_surveys()}
 }

@@ -16,6 +16,6 @@ You must run this function before you can use the other features of this package
 If you don't have a Catalyst API key, get one here: https://catalyst.uw.edu/rest_user.
 }
 \examples{
-webq_config('susieq', 'myapikey000111222333')
+\dontrun{webq_config('susieq', 'myapikey000111222333')}
 
 }

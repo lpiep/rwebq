@@ -4,10 +4,12 @@
 \alias{webq_request}
 \title{webq_request}
 \usage{
-webq_request(endpoint)
+webq_request(endpoint, ...)
 }
 \arguments{
-\item{endpoint}{}
+\item{endpoint}{passed to GET as \code{url}}
+
+\item{...}{additional parameters passed to GET}
 }
 \value{
 HTML Response as a character string

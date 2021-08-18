@@ -13,7 +13,7 @@
   list(key = key, netid = netid)
 }
 
-#' webq_request
+#' .webq_request
 #'
 #' @param endpoint passed to GET as `url`
 #' @param ... additional parameters passed to GET
@@ -21,7 +21,7 @@
 #' @return HTML Response as a character string
 #'
 #'
-webq_request <- function(endpoint, ...){
+.webq_request <- function(endpoint, ...){
   stopifnot(is.character(endpoint))
 
   auth <- .webq_auth()
@@ -90,7 +90,7 @@ webq_config <- function(netid, key) {
 #'  * survey_id: the id that can be used as an argument to retrieve results with `webq_responses`
 #'  * response_count: the current number of responses
 webq_surveys <- function(){
-  html <- webq_request('')
+  html <- .webq_request('')
   name <- rvest::html_text(rvest::html_elements(html, 'a.survey'))
   survey_id <- gsub(.APIURL, '', rvest::html_attr(rvest::html_elements(html, 'a.survey'), 'href'))
   response_count <- as.numeric(rvest::html_text(rvest::html_elements(html, 'span.response_count')))
@@ -121,7 +121,7 @@ webq_participants <- function(survey_id){
   if(!is.character(survey_id)){stop('survey_id must be of type character')}
   if(!grepl('[0-9]+', survey_id)){stop('invalid survey_id format')}
 
-  html <- webq_request(paste0(survey_id, '/responses'))
+  html <- .webq_request(paste0(survey_id, '/responses'))
 
   participants <- rvest::html_elements(html, 'li.participant')
 
@@ -161,9 +161,9 @@ webq_responses <- function(survey_id, participant_ids = NULL){
   if(!(is.null(participant_ids) | is.character(participant_ids))){stop('participant_ids must be of type character')}
 
   if(is.null(participant_ids)){
-    html <- webq_request(paste0(survey_id, '/responses'))
+    html <- .webq_request(paste0(survey_id, '/responses'))
   }else{
-    html <- webq_request(paste0(survey_id, '/responses?', paste0('participant_id=', participant_ids, collapse = '&')))
+    html <- .webq_request(paste0(survey_id, '/responses?', paste0('participant_id=', participant_ids, collapse = '&')))
   }
 
   participants <- rvest::html_elements(html, 'li.participant')

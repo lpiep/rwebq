@@ -98,24 +98,24 @@ webq_surveys <- function(){
   tibble::tibble(name = name, survey_id = survey_id, response_count = response_count)
 }
 
-webq_participants <- function(survey_id){
-  if(length(survey_id) != 1){stop('survey_id must be of length 1')}
-  if(!is.character(survey_id)){stop('survey_id must be of type character')}
-  if(!grepl('[0-9]+', survey_id)){stop('invalid survey_id format')}
-
-  html <- webq_request(paste0(survey_id, '/responses'))
-
-  participants <- rvest::html_nodes(html, 'li.participant')
-
-  participant_id <- sapply(participants, function(ppt){rvest::html_text(rvest::html_elements(ppt, 'span.participant_id'))})
-  rest_id <- sapply(participants, function(ppt){rvest::html_text(rvest::html_elements(ppt, 'span.rest_id'))})
-  start_date <- sapply(participants, function(ppt){rvest::html_text(rvest::html_elements(ppt, 'span.start_date'))})
-  end_date <- sapply(participants, function(ppt){rvest::html_text(rvest::html_elements(ppt, 'span.end_date'))})
-
-  tibble::tibble(survey_id = survey_id, participant_id = participant_id, rest_id = rest_id, start_date = start_date, end_date = end_date)
-}
-
-
+#' webq_participants
+#'
+#' @param survey_id see `webq_surveys` to identify `survey_id`
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
+#' #' @description Returns a tibble of participants for a given survey.
+#' The tibble has the following rows:
+#'
+#'  * survey_id
+#'  * participant_id
+#'  * rest_id (included in the API's output, but appears not to be used)
+#'  * start_date
+#'  * end_date
+#'
 webq_participants <- function(survey_id){
   if(length(survey_id) != 1){stop('survey_id must be of length 1')}
   if(!is.character(survey_id)){stop('survey_id must be of type character')}
@@ -134,6 +134,26 @@ webq_participants <- function(survey_id){
 }
 
 
+#' webq_responses
+#'
+#' @param survey_id see `webq_surveys` to identify `survey_id`
+#' @param participant_ids (optional) see `webq_participants` to identify `participant_id`
+#'
+#' @return
+#' @export
+#'
+#' @examples webq_responses('236008', participant_ids = c('20700916', '12996001'))
+#'
+#' @description Returns a tibble of responses the responses for a given survey and,
+#' if provided, given participants. The tibble includes the following rows:
+#'
+#'  * question_id
+#'  * question_type
+#'  * question_content: the prompt on the Catalyst survey
+#'  * text_values: the participant's responses if text type
+#'  * numeric_values: the participant's responses if numeric type
+#'  * participant_id
+#'
 webq_responses <- function(survey_id, participant_ids = NULL){
   if(length(survey_id) != 1){stop('survey_id must be of length 1')}
   if(!is.character(survey_id)){stop('survey_id must be of type character')}

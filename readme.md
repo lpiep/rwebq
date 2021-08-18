@@ -6,11 +6,13 @@
 
 This project was created for my own use is not maintained by UW IT. It therefore does not support all of the functionality of the WebQ REST API, only the features I needed for my own work. Feel free to reach out and/or submit a PR if you would like to collaborate on extending this package. 
 
+**NOTE:** Catalyst WebQ is available for members of University of Washington only. 
+
 ### Setup
 
-Catalyst WebQ is available for members of University of Washington only. You must [generate a private key](https://catalyst.uw.edu/rest_user) using your UW login. 
+You can install this package from Github using `devtools::install_github('lpiep/rwebq')`.
 
-Once you have done so, store your credentials using the `webq_config` function. This function stores your netid and API key as environment variables (`CATALYST_NETID`, `CATALYST_KEY`). 
+Next, you must [generate a private key](https://catalyst.uw.edu/rest_user) using your UW login. Once you have done so, store your credentials using the `webq_config` function. This function stores your netid and API key as environment variables (`CATALYST_NETID`, `CATALYST_KEY`). 
 
 ```
 webq_config(netid = 'sue', key = 'abcdefghijklmnopqrstuvwxyz123456789')

@@ -47,7 +47,7 @@ You can also list the `participant_id`s, along with the times when they took the
 And, of course, you can pull the responses to your survey. The API supports filtering responses by `participant_id`, and so you can provide a character vector of `participant_ids` to the `webq_responses` function. If you don't provide this vector, the function returns responses for all participants. The API does not support filtering by `question_id`, but you can filter the results afterwards. 
 
 ```
-> webq_responses('236008') # We didn't provide `participant_ids`, so all participant's responses will be returend. 
+> webq_responses('123456') # We didn't provide `participant_ids`, so all participant's responses will be returend. 
 # A tibble: 3 x 6
    question_id question_type            question_content             text_values           numeric_values participant_id
    <chr>       <chr>                    <chr>                        <chr>                 <chr>          <chr>         

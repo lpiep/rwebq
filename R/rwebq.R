@@ -60,6 +60,7 @@
 #'
 #' @param netid Your UW Netid
 #' @param key Your Catalyst API Key
+#' @param verbose Display message about using Renviron (default TRUE).
 #'
 #' @return NULL
 #' @export
@@ -72,18 +73,20 @@
 #'
 #' If you don't have a Catalyst API key, get one here: https://catalyst.uw.edu/rest_user.
 #'
-webq_config <- function(netid, key) {
+webq_config <- function(netid, key, verbose = TRUE) {
   stopifnot(is.character(netid))
   stopifnot(is.character(key))
   Sys.setenv(CATALYST_NETID = netid)
   Sys.setenv(CATALYST_KEY = key)
-  message(
-    sprintf(
-      "To store this key and avoid needing to run webq_config in the future, call `usethis::edit_r_environ()` to edit your .Renviron file and add the following lines: \nCATALYST_NETID=%s\nCATALYST_KEY=%s",
-      netid,
-      key
+  if(verbose){
+    message(
+      sprintf(
+        "To store this key and avoid needing to run webq_config in the future, call `usethis::edit_r_environ()` to edit your .Renviron file and add the following lines: \nCATALYST_NETID=%s\nCATALYST_KEY=%s",
+        netid,
+        key
+      )
     )
-  )
+  }
 }
 
 
@@ -208,4 +211,41 @@ webq_responses <- function(survey_id, participant_ids = NULL){
   all_questions <- do.call(rbind, all_questions)
 
   dplyr::full_join(all_questions, all_responses, by = 'question_id')
+}
+
+#' Generate an RMarkdown Report of WebQ Survey Responses
+#'
+#' @param survey_id The survey for which to produce a report.
+#' @param participant_ids A vector of participant IDs to include. If NULL, will include all participants.
+#' @param question_ids A vector of question IDs to include. If NULL, will include all questions.
+#' @param output_format A supported RMarkdown Format to be passed as a parameter to `rmarkdown::render` (default html_document).
+#' @param output_file The output file path (will be the default for rmarkdown if not defined).
+#' @param ... Additional arguments to be passed to `rmarkdown::render`.
+#'
+#' @return The output file path, invisibly.
+#' @export
+#'
+#' @examples
+webq_report <- function(
+    survey_id,
+    participant_ids = NULL,
+    question_ids = NULL,
+    output_format = NULL,
+    output_file = NULL,
+    ...
+  ){
+  auth <- .webq_auth()
+  rmarkdown::render(
+    'R/webq_report.Rmd',
+    params = list(
+      netid = auth$netid,
+      key = auth$key,
+      survey_id = survey_id,
+      participant_ids = participant_ids,
+      question_ids = question_ids,
+    ),
+    output_format = output_format,
+    output_file = output_file,
+    ...
+  )
 }

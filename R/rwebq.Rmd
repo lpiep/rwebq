@@ -1,0 +1,24 @@
+---
+title: "Survey Report"
+#date: `r Sys.Date()`
+output: html_document
+params: 
+  netid: NULL
+  key: NULL
+  survey_id: NULL
+  participant_ids: NULL
+  question_ids: NULL
+---
+
+```{r setup, include = FALSE}
+webq_config(params$netid, params$key)
+resp <- webq_responses(params$survey_id, params$participant_ids)
+if(!is.null(params$question_ids)){
+  resp <- resp[resp$question_id %in% params$question_ids, ]
+}
+```
+
+```{r, echo = FALSE}
+lapply(split(resp, resp$participant_id), knitr::kable)
+```
+

@@ -66,7 +66,10 @@
 #'
 #' @examples \dontrun{webq_config('susieq', 'myapikey000111222333')}
 #'
-#' @description You must run this function before you can use the other features of this package.
+#' @description You must run this function before you can use the other features of this
+#' package. To avoid running this webq_config at the beginning of every R Session, follow
+#' the prompt to add your Catalyst API key and netid to your .Renviron file.
+#'
 #' If you don't have a Catalyst API key, get one here: https://catalyst.uw.edu/rest_user.
 #'
 webq_config <- function(netid, key) {
@@ -74,6 +77,13 @@ webq_config <- function(netid, key) {
   stopifnot(is.character(key))
   Sys.setenv(CATALYST_NETID = netid)
   Sys.setenv(CATALYST_KEY = key)
+  message(
+    sprintf(
+      "To store this key and avoid needing to run webq_config in the future, call `usethis::edit_r_environ()` to edit your .Renviron file and add the following lines: \nCATALYST_NETID=%s\nCATALYST_KEY=%s",
+      netid,
+      key
+    )
+  )
 }
 
 
@@ -199,4 +209,3 @@ webq_responses <- function(survey_id, participant_ids = NULL){
 
   dplyr::full_join(all_questions, all_responses, by = 'question_id')
 }
-

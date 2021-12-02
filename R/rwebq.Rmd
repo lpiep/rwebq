@@ -11,14 +11,36 @@ params:
 ---
 
 ```{r setup, include = FALSE}
+options(knitr.table.format = 'html') # work for pdf? 
+
 webq_config(params$netid, params$key)
+ppts <- webq_participants(params$survey_id)
 resp <- webq_responses(params$survey_id, params$participant_ids)
 if(!is.null(params$question_ids)){
   resp <- resp[resp$question_id %in% params$question_ids, ]
 }
 ```
 
-```{r, echo = FALSE}
-lapply(split(resp, resp$participant_id), knitr::kable)
+```{r, echo = FALSE, results = 'asis'}
+for(participant_id in sort(unique(resp$participant_id))){
+  cat('<hr />')
+  cat(paste0('\n## Participant: ', participant_id, '\n'))
+  print(
+    htmltools::HTML(
+      kableExtra::kable_styling(
+        knitr::kable(ppts[ppts$participant_id == participant_id, c('start_date', 'end_date')])
+      )
+    )
+  )
+  cat('<hr />')
+  print(
+      htmltools::HTML(
+      kableExtra::kable_styling(
+        knitr::kable(resp[resp$participant_id == participant_id, c('question_content', 'text_values', 'numeric_values')][order(resp$question_id),])
+      )
+    )
+  )
+  
+}
 ```
 

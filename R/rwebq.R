@@ -224,7 +224,7 @@ webq_responses <- function(survey_id, participant_ids = NULL){
 #' @return The output file path, invisibly.
 #' @export
 #'
-#' @examples
+#' @examples \dontrun{webq_report('236008', participant_ids = c('20700916', '12996001'), output_dir = '~/myreports/', output_file = 'report.html')}
 webq_report <- function(
     survey_id,
     participant_ids = NULL,

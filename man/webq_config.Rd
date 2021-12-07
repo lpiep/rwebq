@@ -4,15 +4,20 @@
 \alias{webq_config}
 \title{webq_config}
 \usage{
-webq_config(netid, key)
+webq_config(netid, key, verbose = TRUE)
 }
 \arguments{
 \item{netid}{Your UW Netid}
 
 \item{key}{Your Catalyst API Key}
+
+\item{verbose}{Display message about using Renviron (default TRUE).}
 }
 \description{
-You must run this function before you can use the other features of this package.
+You must run this function before you can use the other features of this
+package. To avoid running this webq_config at the beginning of every R Session, follow
+the prompt to add your Catalyst API key and netid to your .Renviron file.
+
 If you don't have a Catalyst API key, get one here: https://catalyst.uw.edu/rest_user.
 }
 \examples{

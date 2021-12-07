@@ -57,3 +57,7 @@ And, of course, you can pull the responses to your survey. The API supports filt
 ```
 
 I've selected what I considered to be the most useful elements returned by the API to include in the result tibble. Each response contains both a text and numeric version of the participant's answer. Depending on the question type, one or both will be populated. The exact format of the values varies based on the question type. 
+
+
+The responses for a survey (or the responses for a subset of questions) can also be exported in a formatted document generated with Rmarkdown. Use the `webq_report` function to generate a basic report. 
+

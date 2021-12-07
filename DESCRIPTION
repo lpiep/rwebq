@@ -13,6 +13,7 @@ Imports:
     httr (>= 1.4.2),
     rvest (>= 1.0.0),
     dplyr (>= 1.0.0),
-    tibble (>= 3.0.0)
+    tibble (>= 3.0.0),
+    rmarkdown
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)

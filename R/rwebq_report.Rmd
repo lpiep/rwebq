@@ -23,6 +23,10 @@ if(!is.null(params$question_ids)){
 
 ```{r, echo = FALSE, results = 'asis'}
 for(participant_id in sort(unique(resp$participant_id))){
+  ppt_resp <- resp[resp$participant_id == participant_id, c('question_content', 'text_values', 'numeric_values')]
+  ppt_resp <- ppt_resp[order(resp$question_id),] # sort by question
+  ppt_resp <- ppt_resp[apply(ppt_resp, 1, function(x) !all(is.na(x))), ] # only display rows with data
+
   cat('<hr />')
   cat(paste0('\n## Participant: ', participant_id, '\n'))
   print(
@@ -36,11 +40,12 @@ for(participant_id in sort(unique(resp$participant_id))){
   print(
       htmltools::HTML(
       kableExtra::kable_styling(
-        knitr::kable(resp[resp$participant_id == participant_id, c('question_content', 'text_values', 'numeric_values')][order(resp$question_id),])
+        knitr::kable(
+          ppt_resp 
+        )
       )
     )
   )
-  
 }
 ```
 

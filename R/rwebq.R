@@ -218,9 +218,8 @@ webq_responses <- function(survey_id, participant_ids = NULL){
 #' @param survey_id The survey for which to produce a report.
 #' @param participant_ids A vector of participant IDs to include. If NULL, will include all participants.
 #' @param question_ids A vector of question IDs to include. If NULL, will include all questions.
-#' @param output_format A supported RMarkdown Format to be passed as a parameter to `rmarkdown::render` (default html_document).
-#' @param output_file The output file path (will be the default for rmarkdown if not defined).
-#' @param ... Additional arguments to be passed to `rmarkdown::render`.
+#' @param output_dir The output file directory (default `getwd()`)
+#' @param ... Additional arguments to be passed to `rmarkdown::render`, including output_file for file name, output_format, etc.
 #'
 #' @return The output file path, invisibly.
 #' @export
@@ -230,22 +229,20 @@ webq_report <- function(
     survey_id,
     participant_ids = NULL,
     question_ids = NULL,
-    output_format = NULL,
-    output_file = NULL,
+    output_dir = getwd(),
     ...
   ){
   auth <- .webq_auth()
   rmarkdown::render(
-    'R/webq_report.Rmd',
+    system.file("R/rwebq_report.Rmd", package="rwebq"),
     params = list(
       netid = auth$netid,
       key = auth$key,
       survey_id = survey_id,
       participant_ids = participant_ids,
-      question_ids = question_ids,
+      question_ids = question_ids
     ),
-    output_format = output_format,
-    output_file = output_file,
+    output_dir = output_dir,
     ...
   )
 }

@@ -5,7 +5,7 @@
 ### PRIVATE ###
 #' Get Authentication Details
 #'
-#' @return
+#' @return list with API key and netid
 #'
 #' @noRd
 .webq_auth <- function() {
@@ -156,6 +156,8 @@ webq_participants <- function(survey_id){
 #'
 #' @param survey_id see `webq_surveys` to identify `survey_id`
 #' @param participant_ids (optional) see `webq_participants` to identify `participant_id`
+#' @param warn issue warning if some participant_ids are not found?
+#' (default TRUE)
 #'
 #' @return
 #' @export
@@ -172,11 +174,12 @@ webq_participants <- function(survey_id){
 #'  * numeric_values: the participant's responses if numeric type
 #'  * participant_id
 #'
-webq_responses <- function(survey_id, participant_ids = NULL){
+webq_responses <- function(survey_id, participant_ids = NULL, warn = TRUE){
   if(length(survey_id) != 1){stop('survey_id must be of length 1')}
   if(!is.character(survey_id)){stop('survey_id must be of type character')}
   if(!grepl('[0-9]+', survey_id)){stop('invalid survey_id format')}
   if(!(is.null(participant_ids) | is.character(participant_ids))){stop('participant_ids must be of type character')}
+  if(!is.logical(warn) && (length(warn) != 1)){stop('warn must be TRUE or FALSE')}
 
   if(is.null(participant_ids)){
     html <- .webq_request(paste0(survey_id, '/responses'))
@@ -204,6 +207,9 @@ webq_responses <- function(survey_id, participant_ids = NULL){
       )
   all_responses <- do.call(rbind, all_responses)
 
+  if(length(all_responses) == 0){stop("No responses found for the participants provided.")}
+  missing <- setdiff(participant_ids, all_responses$participant_id)
+  if(length(missing) > 0 && warn){warning("Not all participant_ids found in survey data!")}
   questions <- rvest::html_elements(html, 'li.question')
   all_questions <- lapply(questions,
          function(question){

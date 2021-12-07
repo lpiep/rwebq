@@ -3,6 +3,11 @@
 .APIURL <- sprintf('%s/rest/webq/%s/survey/', .APIHOST, .APIVERSION)
 
 ### PRIVATE ###
+#' Get Authentication Details
+#'
+#' @return
+#'
+#' @noRd
 .webq_auth <- function() {
   key <- Sys.getenv('CATALYST_KEY')
   netid <- Sys.getenv('CATALYST_NETID')
@@ -20,7 +25,7 @@
 #'
 #' @return HTML Response as a character string
 #'
-#'
+#' @noRd
 .webq_request <- function(endpoint, ...){
   stopifnot(is.character(endpoint))
 
@@ -120,7 +125,7 @@ webq_surveys <- function(){
 #'
 #' @examples \dontrun{webq_participants('236008')}
 #'
-#' #' @description Returns a tibble of participants for a given survey.
+#' @description Returns a tibble of participants for a given survey.
 #' The tibble has the following rows:
 #'
 #'  * survey_id

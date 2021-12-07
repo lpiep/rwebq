@@ -13,5 +13,17 @@ webq_participants(survey_id)
 
 }
 \description{
-webq_participants
+Returns a tibble of participants for a given survey.
+The tibble has the following rows:
+\itemize{
+\item survey_id
+\item participant_id
+\item rest_id (included in the API's output, but appears not to be used)
+\item start_date
+\item end_date
+}
+}
+\examples{
+\dontrun{webq_participants('236008')}
+
 }

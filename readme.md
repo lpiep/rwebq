@@ -1,5 +1,5 @@
 ## Retirement
-*** WebQ is being retired as of June 16, 2022.*** After that date, I do not expect this package will be functional. 
+***WebQ is being retired as of June 16, 2022!*** After that date, I do not expect this package will be functional. 
 
 # rwebq
 

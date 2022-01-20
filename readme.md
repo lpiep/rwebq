@@ -1,3 +1,6 @@
+## Retirement
+*** WebQ is being retired as of June 16, 2022.*** After that date, I do not expect this package will be functional. 
+
 # rwebq
 
 ## An R interface to the University of Washington [WebQ REST API](https://wiki.cac.washington.edu/display/aca/WebQ+REST+API) for Online Surveys
